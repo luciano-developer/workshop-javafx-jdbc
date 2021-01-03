@@ -6,18 +6,16 @@ public class Department implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private Integer id;
-	private String Name;
-
-	public Department(Integer id, String name) {
-		super();
-		this.id = id;
-		Name = name;
+	public Department() {
+		// TODO Auto-generated constructor stub
 	}
 
-	public Department() {
-		super();
-		// TODO Auto-generated constructor stub
+	private Integer id;
+	private String name;
+
+	public Department(Integer id, String name) {
+		this.id = id;
+		this.name = name;
 	}
 
 	public Integer getId() {
@@ -29,20 +27,11 @@ public class Department implements Serializable {
 	}
 
 	public String getName() {
-		return Name;
+		return name;
 	}
 
 	public void setName(String name) {
-		Name = name;
-	}
-
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-
-	@Override
-	public String toString() {
-		return "Department [id=" + id + ", Name=" + Name + "]";
+		this.name = name;
 	}
 
 	@Override
@@ -67,7 +56,13 @@ public class Department implements Serializable {
 				return false;
 		} else if (!id.equals(other.id))
 			return false;
+
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "Department [id=" + id + ", name=" + name + "]";
 	}
 
 }
