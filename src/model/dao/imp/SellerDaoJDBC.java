@@ -34,7 +34,7 @@ public class SellerDaoJDBC implements SellerDao {
 					Statement.RETURN_GENERATED_KEYS);
 			st.setString(1, obj.getName());
 			st.setString(2, obj.getEmail());
-			st.setDate(3, new java.sql.Date(obj.getBithDate().getTime()));
+			st.setDate(3, new java.sql.Date(obj.getBirthDate().getTime()));
 			st.setDouble(4, obj.getBaseSalary());
 			st.setInt(5, obj.getDepartment().getId());
 
@@ -67,7 +67,7 @@ public class SellerDaoJDBC implements SellerDao {
 
 			st.setString(1, obj.getName());
 			st.setString(2, obj.getEmail());
-			st.setDate(3, new java.sql.Date(obj.getBithDate().getTime()));
+			st.setDate(3, new java.sql.Date(obj.getBirthDate().getTime()));
 			st.setDouble(4, obj.getBaseSalary());
 			st.setInt(5, obj.getDepartment().getId());
 			st.setInt(6, obj.getId());
@@ -200,7 +200,7 @@ public class SellerDaoJDBC implements SellerDao {
 		sel.setId(rs.getInt("Id"));
 		sel.setName(rs.getString("Name"));
 		sel.setEmail(rs.getString("Email"));
-		sel.setBithDate(rs.getDate("BirthDate"));
+		sel.setBirthDate(rs.getDate("BirthDate"));
 		sel.setBaseSalary(rs.getDouble("BaseSalary"));
 		sel.setDepartment(dep);
 		return sel;
