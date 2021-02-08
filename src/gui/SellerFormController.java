@@ -1,9 +1,11 @@
 package gui;
 
 import java.net.URL;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -39,7 +41,7 @@ public class SellerFormController implements Initializable {
 	private SellerService service;
 
 	private DepartmentService departmentService;
-	
+
 	private List<DataChangeListener> dataChangeListeners = new ArrayList<>();
 
 	@FXML
@@ -72,7 +74,7 @@ public class SellerFormController implements Initializable {
 	private Button btCancel;
 
 	private ObservableList<Department> obsList;
-	
+
 	public void setEntity(Seller entity) {
 		this.entity = entity;
 	}
@@ -118,9 +120,24 @@ public class SellerFormController implements Initializable {
 
 		if (Utils.stringIsNullOrEmpty(txtName.getText()))
 			exception.addErrors("name", "Field can't be empty");
-
 		obj.setName(txtName.getText());
+		
+		if (Utils.stringIsNullOrEmpty(txtEmail.getText()))
+			exception.addErrors("email", "Field can't be empty");
+		obj.setEmail(txtEmail.getText());
 
+		if (dpBirthDate.getValue() == null)
+			exception.addErrors("birthDate", "Field can't be empty");
+		else {
+			Instant instant = Instant.from(dpBirthDate.getValue().atStartOfDay(ZoneId.systemDefault()));
+			obj.setBirthDate(Date.from(instant));
+		}
+		if (Utils.stringIsNullOrEmpty(txtBaseSalary.getText()))
+			exception.addErrors("baseSalary", "Field can't be empty");
+		obj.setBaseSalary(Utils.tryParseToDouble(txtBaseSalary.getText()));
+
+		obj.setDepartment(comboBoxDepartment.getValue());
+		
 		if (exception.getErrors().size() > 0)
 			throw exception;
 
@@ -158,40 +175,42 @@ public class SellerFormController implements Initializable {
 		txtBaseSalary.setText(String.format("%.2f", entity.getBaseSalary()));
 		if (entity.getBirthDate() != null)
 			dpBirthDate.setValue(LocalDate.ofInstant(entity.getBirthDate().toInstant(), ZoneId.systemDefault()));
-		
-		if(entity.getDepartment()==null)
+
+		if (entity.getDepartment() == null)
 			comboBoxDepartment.getSelectionModel().selectFirst();
 		else
 			comboBoxDepartment.setValue(entity.getDepartment());
 	}
 
 	public void loadAssociatedObjects() {
-		if (departmentService==null) {
+		if (departmentService == null) {
 			throw new IllegalStateException("DepartmentService was null");
 		}
 		List<Department> list = departmentService.findAll();
 		obsList = FXCollections.observableArrayList(list);
 		comboBoxDepartment.setItems(obsList);
 	}
-	
+
 	private void setErrorMessages(Map<String, String> errors) {
 		Set<String> fields = errors.keySet();
-		if (fields.contains("name")) {
-			labelErrorName.setText(errors.get("name"));
-		}
+
+		labelErrorName.setText(fields.contains("name") ? errors.get("name") : "");
+		labelErrorEmail.setText(fields.contains("email") ? errors.get("email") : "");
+		labelErrorBaseSalary.setText(fields.contains("baseSalary") ? errors.get("baseSalary") : "");
+		labelErrorBirthDate.setText(fields.contains("birthDate") ? errors.get("birthDate") : "");
+
 	}
-	
+
 	private void initializeComboBoxDepartment() {
-		 Callback<ListView<Department>, ListCell<Department>> factory = lv -> new ListCell<Department>() {
-		 @Override
-		 protected void updateItem(Department item, boolean empty) {
-		 super.updateItem(item, empty);
-		 setText(empty ? "" : item.getName());
-		 }
-		 };
+		Callback<ListView<Department>, ListCell<Department>> factory = lv -> new ListCell<Department>() {
+			@Override
+			protected void updateItem(Department item, boolean empty) {
+				super.updateItem(item, empty);
+				setText(empty ? "" : item.getName());
+			}
+		};
 		comboBoxDepartment.setCellFactory(factory);
 		comboBoxDepartment.setButtonCell(factory.call(null));
-		} 
-
+	}
 
 }
